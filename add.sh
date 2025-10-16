@@ -85,13 +85,28 @@ fi
 
 CLIENT_IP="10.0.0.$NEXT_IP/32"
 
-# Get client name
-echo ""
-read -p "Enter client name (e.g., phone, laptop, john-phone): " CLIENT_NAME
-
-if [[ -z $CLIENT_NAME ]]; then
-    print_error "Client name cannot be empty"
-    exit 1
+# Get client name from environment variable, argument, or prompt
+if [[ ! -z $CLIENT_NAME ]]; then
+    # CLIENT_NAME set via environment variable (for curl | bash usage)
+    print_info "Using client name: $CLIENT_NAME"
+elif [[ ! -z $1 ]]; then
+    # CLIENT_NAME passed as argument
+    CLIENT_NAME="$1"
+    print_info "Using client name: $CLIENT_NAME"
+else
+    # Interactive mode - prompt for input
+    echo ""
+    read -p "Enter client name (e.g., phone, laptop, john-phone): " CLIENT_NAME
+    
+    if [[ -z $CLIENT_NAME ]]; then
+        print_error "Client name cannot be empty"
+        echo ""
+        print_info "Usage options:"
+        echo "  1. Interactive: sudo ./add.sh"
+        echo "  2. With argument: sudo ./add.sh client-name"
+        echo "  3. Via curl: curl -fsSL URL | sudo CLIENT_NAME=client-name bash"
+        exit 1
+    fi
 fi
 
 # Sanitize client name
@@ -103,11 +118,8 @@ if [[ -f "$CLIENT_DIR/${CLIENT_NAME}.conf" ]]; then
     exit 1
 fi
 
-# Allow custom IP
-read -p "Use IP $CLIENT_IP? (press Enter or type custom IP): " CUSTOM_IP
-if [[ ! -z $CUSTOM_IP ]]; then
-    CLIENT_IP="$CUSTOM_IP"
-fi
+# Auto-assign IP (no prompt)
+print_info "Auto-assigned IP: $CLIENT_IP"
 
 print_info "Generating keys for client '$CLIENT_NAME'..."
 
