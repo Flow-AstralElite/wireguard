@@ -4,7 +4,9 @@ curl -fsSL https://raw.githubusercontent.com/flow-astralelite/wireguard/main/ins
 ```
 # Add more users
 ```bash
-curl -fsSL https://raw.githubusercontent.com/flow-astralelite/wireguard/main/add.sh | sudo bash
+wget https://raw.githubusercontent.com/flow-astralelite/wireguard/main/add.sh
+chmod +x add.sh
+sudo ./add.sh
 ```
 ## Get client config
 ```bash
